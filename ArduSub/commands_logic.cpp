@@ -537,9 +537,13 @@ bool Sub::verify_circle(const AP_Mission::Mission_Command& cmd)
         }
         return false;
     }
-
+    float turns = LOWBYTE(cmd.p1);
+    if (cmd.type_specific_bits & (1U<<1)) {
+        // special storage handling allows for fractional turns
+        turns /= 256.0;
+    }
     // check if we have completed circling
-    return fabsf(sub.circle_nav.get_angle_total()/M_2PI) >= LOWBYTE(cmd.p1);
+    return fabsf(sub.circle_nav.get_angle_total()/M_2PI) >= turns;
 }
 
 #if NAV_GUIDED == ENABLED

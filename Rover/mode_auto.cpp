@@ -943,8 +943,13 @@ bool ModeAuto::do_circle(const AP_Mission::Mission_Command& cmd)
 
 bool ModeAuto::verify_circle(const AP_Mission::Mission_Command& cmd)
 {
+    float turns = LOWBYTE(cmd.p1);
+    if (cmd.type_specific_bits & (1U<<1)) {
+        // special storage handling allows for fractional turns
+        turns /= 256.0;
+    }
     // check if we have completed circling
-    return ((g2.mode_circle.get_angle_total_rad() / M_2PI) >= LOWBYTE(cmd.p1));
+    return ((g2.mode_circle.get_angle_total_rad() / M_2PI) >= turns);
 }
 
 /********************************************************************************/
